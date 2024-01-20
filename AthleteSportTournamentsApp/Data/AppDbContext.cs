@@ -12,11 +12,9 @@ namespace AthleteSportTournamentsApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure relationships and constraints
             modelBuilder.Entity<AthleteSportTournaments>()
                 .HasKey(ast => new { ast.AthleteId, ast.SportId, ast.TournamentId });
 
-            // Define foreign key relationships
             modelBuilder.Entity<AthleteSportTournaments>()
                 .HasOne(ast => ast.Athlete)
                 .WithMany(a => a.AthleteSportTournaments)

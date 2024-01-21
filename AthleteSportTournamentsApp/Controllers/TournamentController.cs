@@ -8,8 +8,6 @@ namespace AthleteSportTournamentsApp.Controllers
     [Route("api/tournaments")]
     public class TournamentController : ControllerBase
     {
-
-
         private readonly ITournamentService _tournamentService;
 
         public TournamentController(ITournamentService tournamentService)

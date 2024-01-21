@@ -1,4 +1,5 @@
-﻿using AthleteSportTournamentsApp.DTOs;
+﻿using AthleteSportTournamentsApp.Data;
+using AthleteSportTournamentsApp.DTOs;
 
 namespace AthleteSportTournamentsApp.Models.Service
 {

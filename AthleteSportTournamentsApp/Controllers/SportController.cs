@@ -1,5 +1,5 @@
 ﻿using AthleteSportTournaments.DTOs;
-using AthleteSportTournamentsApp.Models.Service;
+using AthleteSportTournamentsApp.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AthleteSportTournamentsApp.Controllers

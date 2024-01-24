@@ -1,7 +1,7 @@
 ﻿using AthleteSportTournaments.DTOs;
 using AthleteSportTournamentsApp.DTOs;
 
-namespace AthleteSportTournamentsApp.Models.Service
+namespace AthleteSportTournamentsApp.Service
 {
     public interface IAthleteSportTournamentsService
     {

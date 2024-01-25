@@ -1,13 +1,13 @@
-﻿using AthleteSportTournaments.DTOs;
-using AthleteSportTournamentsApp.DTOs;
+﻿using AthleteSportTournamentsApp.Data;
 
 namespace AthleteSportTournamentsApp.Service
 {
     public interface IAthleteSportTournamentsService
     {
-        IEnumerable<AthleteDTO> GetSportsByAthleteId(int athleteId);
-        IEnumerable<SportDTO> GetAthletesBySportId(int sportId);
-        void AssignAthleteToSport(AthleteSportTournamentsDTO assignmentDTO);
-        void RemoveAthleteSportAssociation(int athleteId, int sportId);
+        public Task Add(AthleteTournament athleteSportTournaments);
+        public Task Update(int id, AthleteTournament athleteSAthleteSportTournament);
+        public Task Delete(int id);
+        public Task<AthleteTournament> GetById(int id);
+        public Task<List<AthleteTournament>> GetAll();
     }
 }

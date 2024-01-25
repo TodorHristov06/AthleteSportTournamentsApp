@@ -13,7 +13,7 @@ namespace AthleteSportTournamentsApp.Migrations
                 name: "Athletes",
                 columns: table => new
                 {
-                    AthleteId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -22,14 +22,14 @@ namespace AthleteSportTournamentsApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Athletes", x => x.AthleteId);
+                    table.PrimaryKey("PK_Athletes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Sports",
                 columns: table => new
                 {
-                    SportId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SportName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -38,28 +38,28 @@ namespace AthleteSportTournamentsApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sports", x => x.SportId);
+                    table.PrimaryKey("PK_Sports", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Tournaments",
                 columns: table => new
                 {
-                    TournamentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SportId = table.Column<int>(type: "int", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SportId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tournaments", x => x.TournamentId);
+                    table.PrimaryKey("PK_Tournaments", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Tournaments_Sports_SportId",
                         column: x => x.SportId,
                         principalTable: "Sports",
-                        principalColumn: "SportId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -68,36 +68,25 @@ namespace AthleteSportTournamentsApp.Migrations
                 columns: table => new
                 {
                     AthleteId = table.Column<int>(type: "int", nullable: false),
-                    SportId = table.Column<int>(type: "int", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false)
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AthleteSportTournaments", x => new { x.AthleteId, x.SportId, x.TournamentId });
+                    table.PrimaryKey("PK_AthleteSportTournaments", x => new { x.AthleteId, x.TournamentId });
                     table.ForeignKey(
                         name: "FK_AthleteSportTournaments_Athletes_AthleteId",
                         column: x => x.AthleteId,
                         principalTable: "Athletes",
-                        principalColumn: "AthleteId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AthleteSportTournaments_Sports_SportId",
-                        column: x => x.SportId,
-                        principalTable: "Sports",
-                        principalColumn: "SportId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AthleteSportTournaments_Tournaments_TournamentId",
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
-                        principalColumn: "TournamentId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AthleteSportTournaments_SportId",
-                table: "AthleteSportTournaments",
-                column: "SportId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AthleteSportTournaments_TournamentId",

@@ -1,5 +1,7 @@
-﻿using AthleteSportTournamentsApp.DTOs;
+﻿using AthleteSportTournamentsApp.Data;
+using AthleteSportTournamentsApp.DTOs;
 using AthleteSportTournamentsApp.Service;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AthleteSportTournamentsApp.Controllers
@@ -9,52 +11,67 @@ namespace AthleteSportTournamentsApp.Controllers
     public class AthleteController : ControllerBase
     {
         private readonly IAthleteService _athleteService;
+        private readonly IMapper _mapper;
 
-        public AthleteController(IAthleteService athleteService)
+        public AthleteController(IAthleteService athleteService, IMapper mapper)
         {
             _athleteService = athleteService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult GetAllAthletes()
+        public async Task<IActionResult> GetAllAthletes()
         {
-            var athletes = _athleteService.GetAllAthletes();
-            return Ok(athletes);
+            var athletes = await _athleteService.GetAll();
+            var athleteDTOs = _mapper.Map<List<AthleteDTO>>(athletes);
+            return Ok(athleteDTOs);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetAthleteById(int id)
+        public async Task<IActionResult> GetAthleteById(int id)
         {
-            var athlete = _athleteService.GetAthleteById(id);
+            var athlete = await _athleteService.GetById(id);
             if (athlete == null)
             {
                 return NotFound();
             }
-            return Ok(athlete);
+
+            var athleteDTO = _mapper.Map<AthleteDTO>(athlete);
+            return Ok(athleteDTO);
         }
 
         [HttpPost]
-        public IActionResult CreateAthlete([FromBody] AthleteDTO athleteDTO)
+        public async Task<IActionResult> CreateAthlete([FromBody] AthleteDTO athleteDTO)
         {
-            var createdAthlete = _athleteService.CreateAthlete(athleteDTO);
-            return CreatedAtAction(nameof(GetAthleteById), new { id = createdAthlete.AthleteId }, createdAthlete);
+            var athlete = _mapper.Map<Athlete>(athleteDTO);
+            await _athleteService.Add(athlete);
+
+            var createdAthleteDTO = _mapper.Map<AthleteDTO>(athlete);
+
+            return CreatedAtAction(nameof(GetAthleteById), new { id = createdAthleteDTO.Id }, createdAthleteDTO);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateAthlete(int id, [FromBody] AthleteDTO athleteDTO)
+        public async Task<IActionResult> UpdateAthlete(int id, [FromBody] AthleteDTO athleteDTO)
         {
-            var updatedAthlete = _athleteService.UpdateAthlete(id, athleteDTO);
+            var athlete = _mapper.Map<Athlete>(athleteDTO);
+            await _athleteService.Update(athlete);
+
+            var updatedAthlete = await _athleteService.GetById(id);
             if (updatedAthlete == null)
             {
                 return NotFound();
             }
-            return Ok(updatedAthlete);
+
+            var updatedAthleteDTO = _mapper.Map<AthleteDTO>(updatedAthlete);
+
+            return Ok(updatedAthleteDTO);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteAthlete(int id)
+        public async Task<IActionResult> DeleteAthlete(int id)
         {
-            _athleteService.DeleteAthlete(id);
+            await _athleteService.Delete(id);
             return NoContent();
         }
     }

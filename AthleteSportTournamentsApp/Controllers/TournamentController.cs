@@ -1,5 +1,7 @@
 ﻿using AthleteSportTournaments.DTOs;
+using AthleteSportTournamentsApp.Data;
 using AthleteSportTournamentsApp.Service;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AthleteSportTournamentsApp.Controllers
@@ -9,54 +11,68 @@ namespace AthleteSportTournamentsApp.Controllers
     public class TournamentController : ControllerBase
     {
         private readonly ITournamentService _tournamentService;
+        private readonly IMapper _mapper;
 
-        public TournamentController(ITournamentService tournamentService)
+        public TournamentController(ITournamentService tournamentService, IMapper mapper)
         {
             _tournamentService = tournamentService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult GetAllTournaments()
+        public async Task<IActionResult> GetAllTournaments()
         {
-            var tournaments = _tournamentService.GetAllTournaments();
-            return Ok(tournaments);
+            var tournaments = await _tournamentService.GetAll();
+            var tournamentDTOs = _mapper.Map<List<TournamentDTO>>(tournaments);
+            return Ok(tournamentDTOs);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTournamentById(int id)
+        public async Task<IActionResult> GetTournamentById(int id)
         {
-            var tournament = _tournamentService.GetTournamentById(id);
+            var tournament = await _tournamentService.GetById(id);
             if (tournament == null)
             {
                 return NotFound();
             }
-            return Ok(tournament);
+
+            var tournamentDTO = _mapper.Map<TournamentDTO>(tournament);
+            return Ok(tournamentDTO);
         }
 
         [HttpPost]
-        public IActionResult CreateTournament([FromBody] TournamentDTO tournamentDTO)
+        public async Task<IActionResult> CreateTournament([FromBody] TournamentDTO tournamentDTO)
         {
-            var createdTournament = _tournamentService.CreateTournament(tournamentDTO);
-            return CreatedAtAction(nameof(GetTournamentById), new { id = createdTournament.TournamentId }, createdTournament);
+            var tournament = _mapper.Map<Tournament>(tournamentDTO);
+            await _tournamentService.Add(tournament);
+
+            var createdTournamentDTO = _mapper.Map<TournamentDTO>(tournament);
+
+            return CreatedAtAction(nameof(GetTournamentById), new { id = createdTournamentDTO.Id }, createdTournamentDTO);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateTournament(int id, [FromBody] TournamentDTO tournamentDTO)
+        public async Task<IActionResult> UpdateTournament(int id, [FromBody] TournamentDTO tournamentDTO)
         {
-            var updatedTournament = _tournamentService.UpdateTournament(id, tournamentDTO);
+            var tournament = _mapper.Map<Tournament>(tournamentDTO);
+            await _tournamentService.Update(tournament);
+
+            var updatedTournament = await _tournamentService.GetById(id);
             if (updatedTournament == null)
             {
                 return NotFound();
             }
-            return Ok(updatedTournament);
+
+            var updatedTournamentDTO = _mapper.Map<TournamentDTO>(updatedTournament);
+
+            return Ok(updatedTournamentDTO);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTournament(int id)
+        public async Task<IActionResult> DeleteTournament(int id)
         {
-            _tournamentService.DeleteTournament(id);
+            await _tournamentService.Delete(id);
             return NoContent();
         }
-
     }
 }

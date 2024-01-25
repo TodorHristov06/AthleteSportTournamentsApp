@@ -24,11 +24,11 @@ namespace AthleteSportTournamentsApp.Migrations
 
             modelBuilder.Entity("AthleteSportTournamentsApp.Data.Athlete", b =>
                 {
-                    b.Property<int>("AthleteId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AthleteId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -45,25 +45,23 @@ namespace AthleteSportTournamentsApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AthleteId");
+                    b.HasKey("Id");
 
                     b.ToTable("Athletes");
                 });
 
-            modelBuilder.Entity("AthleteSportTournamentsApp.Data.AthleteSportTournaments", b =>
+            modelBuilder.Entity("AthleteSportTournamentsApp.Data.AthleteTournament", b =>
                 {
                     b.Property<int>("AthleteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SportId")
                         .HasColumnType("int");
 
                     b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
-                    b.HasKey("AthleteId", "SportId", "TournamentId");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
-                    b.HasIndex("SportId");
+                    b.HasKey("AthleteId", "TournamentId");
 
                     b.HasIndex("TournamentId");
 
@@ -72,11 +70,11 @@ namespace AthleteSportTournamentsApp.Migrations
 
             modelBuilder.Entity("AthleteSportTournamentsApp.Data.Sport", b =>
                 {
-                    b.Property<int>("SportId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SportId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -94,18 +92,18 @@ namespace AthleteSportTournamentsApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SportId");
+                    b.HasKey("Id");
 
                     b.ToTable("Sports");
                 });
 
             modelBuilder.Entity("AthleteSportTournamentsApp.Data.Tournament", b =>
                 {
-                    b.Property<int>("TournamentId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TournamentId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -120,36 +118,28 @@ namespace AthleteSportTournamentsApp.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("TournamentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("SportId");
 
                     b.ToTable("Tournaments");
                 });
 
-            modelBuilder.Entity("AthleteSportTournamentsApp.Data.AthleteSportTournaments", b =>
+            modelBuilder.Entity("AthleteSportTournamentsApp.Data.AthleteTournament", b =>
                 {
                     b.HasOne("AthleteSportTournamentsApp.Data.Athlete", "Athlete")
-                        .WithMany("AthleteSportTournaments")
+                        .WithMany()
                         .HasForeignKey("AthleteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AthleteSportTournamentsApp.Data.Sport", "Sport")
-                        .WithMany("AthleteSportTournaments")
-                        .HasForeignKey("SportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AthleteSportTournamentsApp.Data.Tournament", "Tournament")
-                        .WithMany("AthleteSportTournaments")
+                        .WithMany()
                         .HasForeignKey("TournamentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Athlete");
-
-                    b.Navigation("Sport");
 
                     b.Navigation("Tournament");
                 });
@@ -163,21 +153,6 @@ namespace AthleteSportTournamentsApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Sport");
-                });
-
-            modelBuilder.Entity("AthleteSportTournamentsApp.Data.Athlete", b =>
-                {
-                    b.Navigation("AthleteSportTournaments");
-                });
-
-            modelBuilder.Entity("AthleteSportTournamentsApp.Data.Sport", b =>
-                {
-                    b.Navigation("AthleteSportTournaments");
-                });
-
-            modelBuilder.Entity("AthleteSportTournamentsApp.Data.Tournament", b =>
-                {
-                    b.Navigation("AthleteSportTournaments");
                 });
 #pragma warning restore 612, 618
         }

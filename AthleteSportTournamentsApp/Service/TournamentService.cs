@@ -1,63 +1,46 @@
 ﻿using AthleteSportTournaments.DTOs;
 using AthleteSportTournamentsApp.Data;
+using AthleteSportTournamentsApp.Repositories;
 using AutoMapper;
 
 namespace AthleteSportTournamentsApp.Service
 {
     public class TournamentService : ITournamentService
     {
-        private readonly AppDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly ICrudRepository<Tournament> _repository;
 
-        public TournamentService(AppDbContext dbContext, IMapper mapper)
+        public TournamentService(ICrudRepository<Tournament> repository)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _repository = repository;
         }
 
-        public IEnumerable<TournamentDTO> GetAllTournaments()
+        public async Task Add(Tournament tournament)
         {
-            var tournaments = _dbContext.Tournaments.ToList();
-            return _mapper.Map<IEnumerable<TournamentDTO>>(tournaments);
+            await _repository.AddAsync(tournament);
         }
 
-        public TournamentDTO GetTournamentById(int id)
+        public async Task Update(Tournament tournament)
         {
-            var tournamentEntity = _dbContext.Tournaments.Find(id);
-            return tournamentEntity != null ? _mapper.Map<TournamentDTO>(tournamentEntity) : null;
-        }
-
-        public TournamentDTO CreateTournament(TournamentDTO tournamentDTO)
-        {
-            var tournamentEntity = _mapper.Map<Tournament>(tournamentDTO);
-            _dbContext.Tournaments.Add(tournamentEntity);
-            _dbContext.SaveChanges();
-            return _mapper.Map<TournamentDTO>(tournamentEntity);
-        }
-
-        public TournamentDTO UpdateTournament(int id, TournamentDTO tournamentDTO)
-        {
-            var tournamentEntity = _dbContext.Tournaments.Find(id);
-
-            if (tournamentEntity != null)
+            var existingTournament = await _repository.GetByIdAsync(tournament.Id);
+            if (existingTournament != null)
             {
-                _mapper.Map(tournamentDTO, tournamentEntity);
-                _dbContext.SaveChanges();
-                return _mapper.Map<TournamentDTO>(tournamentEntity);
+                await _repository.UpdateAsync(existingTournament);
             }
-
-            return null;
         }
 
-        public void DeleteTournament(int id)
+        public async Task Delete(int id)
         {
-            var tournamentEntity = _dbContext.Tournaments.Find(id);
+            await _repository.DeleteAsync(id);
+        }
 
-            if (tournamentEntity != null)
-            {
-                _dbContext.Tournaments.Remove(tournamentEntity);
-                _dbContext.SaveChanges();
-            }
+        public Task<Tournament> GetById(int id)
+        {
+            return _repository.GetByIdAsync(id);
+        }
+
+        public Task<List<Tournament>> GetAll()
+        {
+            return _repository.GetAllAsync();
         }
     }
 }

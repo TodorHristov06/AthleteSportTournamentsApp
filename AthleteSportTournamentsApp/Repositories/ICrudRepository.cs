@@ -1,4 +1,6 @@
-﻿namespace AthleteSportTournamentsApp.Repositories
+﻿using AthleteSportTournamentsApp.Data;
+
+namespace AthleteSportTournamentsApp.Repositories
 {
     public interface ICrudRepository<T>
     {

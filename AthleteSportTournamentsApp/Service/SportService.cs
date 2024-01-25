@@ -1,63 +1,42 @@
 ﻿using AthleteSportTournaments.DTOs;
 using AthleteSportTournamentsApp.Data;
+using AthleteSportTournamentsApp.Repositories;
 using AutoMapper;
 
 namespace AthleteSportTournamentsApp.Service
 {
     public class SportService : ISportService
     {
-        private readonly AppDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public SportService(AppDbContext dbContext, IMapper mapper)
+        private readonly ICrudRepository<Sport> _repository;
+        private readonly AppDbContext _context;
+        public SportService(ICrudRepository<Sport> repository, AppDbContext context)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _repository = repository;
+            _context = context;
+        }
+        public Task Add(Sport sport)
+        {
+            return _repository.AddAsync(sport);
         }
 
-        public IEnumerable<SportDTO> GetAllSports()
+        public Task Delete(int id)
         {
-            var sports = _dbContext.Sports.ToList();
-            return _mapper.Map<IEnumerable<SportDTO>>(sports);
+            return _repository.DeleteAsync(id);
         }
 
-        public SportDTO GetSportById(int id)
+        public Task<List<Sport>> GetAll()
         {
-            var sportEntity = _dbContext.Sports.Find(id);
-            return sportEntity != null ? _mapper.Map<SportDTO>(sportEntity) : null;
+            return _repository.GetAllAsync();
         }
 
-        public SportDTO CreateSport(SportDTO sportDTO)
+        public Task<Sport> GetById(int id)
         {
-            var sportEntity = _mapper.Map<Sport>(sportDTO);
-            _dbContext.Sports.Add(sportEntity);
-            _dbContext.SaveChanges();
-            return _mapper.Map<SportDTO>(sportEntity);
+            return _repository.GetByIdAsync(id);
         }
 
-        public SportDTO UpdateSport(int id, SportDTO sportDTO)
+        public Task Update(Sport sport)
         {
-            var sportEntity = _dbContext.Sports.Find(id);
-
-            if (sportEntity != null)
-            {
-                _mapper.Map(sportDTO, sportEntity);
-                _dbContext.SaveChanges();
-                return _mapper.Map<SportDTO>(sportEntity);
-            }
-
-            return null;
-        }
-
-        public void DeleteSport(int id)
-        {
-            var sportEntity = _dbContext.Sports.Find(id);
-
-            if (sportEntity != null)
-            {
-                _dbContext.Sports.Remove(sportEntity);
-                _dbContext.SaveChanges();
-            }
+            return _repository.UpdateAsync(sport);
         }
     }
 }

@@ -1,78 +1,40 @@
 ﻿using AthleteSportTournamentsApp.Data;
-using AthleteSportTournamentsApp.DTOs;
+using AthleteSportTournamentsApp.Service;
+using AthleteSportTournamentsApp.Repositories;
 using AutoMapper;
 
 namespace AthleteSportTournamentsApp.Service
 {
-
     public class AthleteService : IAthleteService
     {
-        private readonly AppDbContext _dbContext;
-        private readonly IMapper _mapper;
-
-        public AthleteService(AppDbContext dbContext, IMapper mapper)
+        private readonly ICrudRepository<Athlete> _repository;
+        public AthleteService(ICrudRepository<Athlete> repository)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _repository = repository;
+        }
+        public Task Add(Athlete athlete)
+        {
+            return _repository.AddAsync(athlete);
         }
 
-        public AthleteDTO CreateAthlete(AthleteDTO athleteDTO)
+        public Task Delete(int id)
         {
-            // Map the DTO to the entity
-            var athleteEntity = _mapper.Map<Athlete>(athleteDTO);
-
-            // Add the entity to the database
-            _dbContext.Athletes.Add(athleteEntity);
-            _dbContext.SaveChanges();
-
-            // Map the created entity back to DTO
-            return _mapper.Map<AthleteDTO>(athleteEntity);
+            return _repository.DeleteAsync(id);
         }
 
-        public void DeleteAthlete(int id)
+        public Task<List<Athlete>> GetAll()
         {
-            // Find the athlete by id
-            var athleteEntity = _dbContext.Athletes.Find(id);
-
-            if (athleteEntity != null)
-            {
-                // Remove the athlete from the database
-                _dbContext.Athletes.Remove(athleteEntity);
-                _dbContext.SaveChanges();
-            }
+            return _repository.GetAllAsync();
         }
 
-        public IEnumerable<AthleteDTO> GetAllAthletes()
+        public Task<Athlete> GetById(int id)
         {
-            // Retrieve all athletes from the database and map them to DTOs
-            var athletes = _dbContext.Athletes.ToList();
-            return _mapper.Map<IEnumerable<AthleteDTO>>(athletes);
+            return _repository.GetByIdAsync(id);
         }
 
-        public AthleteDTO GetAthleteById(int id)
+        public Task Update(Athlete athlete)
         {
-            // Find the athlete by id and map it to DTO
-            var athleteEntity = _dbContext.Athletes.Find(id);
-            return athleteEntity != null ? _mapper.Map<AthleteDTO>(athleteEntity) : null;
-        }
-
-        public AthleteDTO UpdateAthlete(int id, AthleteDTO athleteDTO)
-        {
-            // Find the athlete by id
-            var athleteEntity = _dbContext.Athletes.Find(id);
-
-            if (athleteEntity != null)
-            {
-                // Update the athlete's properties with values from the DTO
-                _mapper.Map(athleteDTO, athleteEntity);
-
-                _dbContext.SaveChanges();
-
-                // Map the updated entity back to DTO
-                return _mapper.Map<AthleteDTO>(athleteEntity);
-            }
-
-            return null;
+            return _repository.UpdateAsync(athlete);
         }
     }
 }

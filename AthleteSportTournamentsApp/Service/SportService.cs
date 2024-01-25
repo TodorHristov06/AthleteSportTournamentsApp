@@ -8,11 +8,9 @@ namespace AthleteSportTournamentsApp.Service
     public class SportService : ISportService
     {
         private readonly ICrudRepository<Sport> _repository;
-        private readonly AppDbContext _context;
-        public SportService(ICrudRepository<Sport> repository, AppDbContext context)
+        public SportService(ICrudRepository<Sport> repository)
         {
             _repository = repository;
-            _context = context;
         }
         public Task Add(Sport sport)
         {

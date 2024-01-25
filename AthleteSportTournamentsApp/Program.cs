@@ -20,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped(typeof(ICrudRepository<>), typeof(CrudRepository<>));
 
 builder.Services.AddScoped<IAthleteService, AthleteService>();
+builder.Services.AddScoped<ISportService, SportService>();// Add this line
+builder.Services.AddScoped<ITournamentService, TournamentService>();// Add this line
+builder.Services.AddScoped<IAthleteSportTournamentsService, AthleteSportTournamentsService>();// Add this line
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
